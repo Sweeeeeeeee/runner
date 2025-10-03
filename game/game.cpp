@@ -3,6 +3,10 @@
 #include <vector>
 #include <stdexcept>
 
+vector::vector() {
+	return;
+}
+
 vector::vector(std::vector<int>& _m_) {
 	m = _m_;
 }
@@ -136,7 +140,9 @@ playerEnt::playerEnt(vector koordinates) {
 	team = _team_;
 }
 
-int playerEnt::move(playerEnt& ent) {
+int playerEnt::move(vector _koordinates_, playerEnt& ent) {
+	koordinates = _koordinates_;
+
 	if (team == ent.teamGet()) {
 		return 0;
 	}
@@ -238,7 +244,7 @@ object field::operator [](vector& at) {
 			throw std::invalid_argument("overflow");
 		}
 
-		index += cell[i] * width;
+		index += at[i] * width;
 		width *= size[i];
 	}
 

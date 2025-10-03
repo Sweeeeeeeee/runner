@@ -8,6 +8,7 @@ class vector {
 		std::vector<int> m;
 
 	public:
+		vector();
 		vector(std::vector<int>& _m_);
 
 		int size();
@@ -143,7 +144,7 @@ class player {
 
 		bool won;
 
-		object ent;
+		playerEnt ent;
 
 	public:
 		player(vector& _koordinates_, int team);
