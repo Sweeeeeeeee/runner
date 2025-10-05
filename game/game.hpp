@@ -2,50 +2,75 @@
 #define RUNNER_HPP
 
 #include <vector>
+#include <unordered_map>
+#include <cstdint>
 
+// for safety
+typedef std::uint8_t u8;
+typedef std::uint16_t u16;
+typedef std::uint32_t u32;
+typedef std::uint64_t u64;
+
+// acsees managment adaptor
 class vector {
 	private:
-		std::vector<int> m;
+		std::vector<u16> m;
 
 	public:
 		vector();
-		vector(std::vector<int>& _m_);
+		vector(std::vector<u16>& _m_);
 
-		int size();
-		int operator [](int at);
+		u8 size();
+		void resize(u8 size);
+		u16 operator [](u8 at);
 
-		void increment(int at, int by);
+		void increment(u8 at, u16 by);
 		bool add(vector& other);
 };
 
+// cyclic class defenition
 class playerEnt;
 
 class field;
 
+// entities on the map
 class object {
-	private:
+	protected:
 		vector koordinates;
 
 	public:
-		virtual int move(playerEnt& ent);
+		object(vector& _koordinates_);
 
+		// manages non map entities move
+		virtual u8 move(playerEnt& ent);
+
+		// moves itself
+		//
+		// return value, true - destroy the object, false - keep the object
 		virtual bool perform(field& map);
 
+		// call of element to destroy itself
 		virtual void destroy();
 };
 
+// empty sapce
 class nothing : public object {
 	public:
-		int move(playerEnt& ent);
+		nothing(vector& _koordinates_);
+
+		u8 move(playerEnt& ent);
 
 		bool perform(field& map);
 
 		void destroy();
 };
 
+// non breachable wall
 class wall : public object {
 	public:
-		int move(playerEnt& ent);
+		wall(vector& _koordinates_);
+
+		u8 move(playerEnt& ent);
 
 		bool perform(field& map);
 
@@ -53,61 +78,76 @@ class wall : public object {
 
 };
 
+// kills evrything
 class hell : public object {
 	public:
-		int move(playerEnt& ent);
+		hell(vector& _koordinates_);
+
+		u8 move(playerEnt& ent);
 
 		bool perform(field& map);
 
 		void destroy();
 };
 
+// proclaims one a victor
 class heaven : public object {
 	public:
-		int move(playerEnt& ent);
+		heaven(vector& _koordinates_);
+
+		u8 move(playerEnt& ent);
 
 		bool perform(field& map);
 
 		void destroy();
 };
 
+// moving death zone
 class zone : public object {
 	private:
 		bool destroyZone;
 
-		int moveDimension;
-		int to;
+		// rules to move
+		u8 moveDimension;
+		u16 to;
 
 	public:
-		zone(int _moveDimension_, int _to_);
+		zone(vector& koordinates, u8 _moveDimension_, u16 _to_);
 
-		int move(playerEnt& ent);
+		u8 move(playerEnt& ent);
 
 		bool perform(field& map);
 
 		void destroy();
 };
 
+// object representing player on the map
 class playerEnt : public object {
 	private:
-		bool destroyPlayer;
-
+		// values to report to the player
 		bool dead;
-		bool lost;
+		bool won;
 
-		int team;
+		u16 team;
 
 	public:
-		playerEnt(int _team_);
+		playerEnt(vector& _koordinates_, u16 _team_);
 
-		int teamGet();
+		u8 move(playerEnt& ent);
+
+		bool perform(field& map);
+
+		void destroy();
+
+		u16 teamGet();
 
 		void die();
-		bool alive();
+		bool deadGet();
 		void win();
-		bool won();
+		bool wonGet();
 };
 
+// map
 class field {
 	private:
 		vector size;
@@ -117,25 +157,28 @@ class field {
 	public:
 		field(vector& _size_);
 		bool empty(vector& at);
-		bool change(vector& at, object& assign);
+		void change(vector& at, object& assign);
 
-		int dimensions();
-		int dimensionSize(int id);
-		object operator [](vector& at);
+		u8 dimensionsGet();
+		u16 dimensionSizeGet(u8 id);
+		object& operator [](vector& at);
 };
 
+// instructions for player to move
 class action {
 	private:
-		int moveDimension;
-		int to;
+		u8 moveDimension;
+		u16 to;
 
 	public:
-		action(int _moveDimension_, int _to_);
+		action();
+		action(u8 _moveDimension_, u16 _to_);
 
-		int moveDimensionGet();
-		int toGet();
+		u8 moveDimensionGet();
+		u16 toGet();
 };
 
+// player
 class player {
 	private:
 		vector koordinates;
@@ -147,33 +190,45 @@ class player {
 		playerEnt ent;
 
 	public:
-		player(vector& _koordinates_, int team);
-		int dimensions();
-		int operator [](int at);
+		player(vector& _koordinates_, u16 team);
+
+		u8 dimensionsGet();
+		u16 operator [](u8 at);
 
 		object& obj();
 
-		vector where();
+		vector& where();
 
 		void save(action& act);
 		bool perform(field& map);
+
+		bool deadGet();
+		bool wonGet();
 };
 
+// game manager
 class game {
 	private:
-		int moveNumber;
+		u64 moveNumber;
 		bool done;
 
-		std::vector<player> players;
+		std::vector<player> playerLog;
+		std::vector<player*> players;
+
 		std::vector<object> objects;
 
 		field map;
 
 	public:
-		game(field& _map_, std::vector<player>& _players_, std::vector<object>& objects);
-		bool step();
+		game(field& _map_, std::vector<player>& _players_, std::vector<std::pair<object, vector>>& objects);
+		void step();
 
-		bool move(int id, action act);
+		void move(u16 id, action act);
+
+		bool gameEnded();
+
+		bool playerDeadGet(u16 id);
+		bool playerWonGet(u16 id);
 };
 
 #endif // RUNNER_HPP
