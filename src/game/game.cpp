@@ -15,6 +15,21 @@ namespace game {
 		info(type, groupId) {
 	}
 
+	u8 object::move(playerEnt& ent) {
+		// fuck u
+		return -1;
+	}
+
+	bool object::perform(field& map) {
+		// here as fucking well
+		return false;
+	}
+
+	void object::destroy() {
+		// and fucking evrywhere
+		return;
+	}
+
 	data::metaData object::infoGet() const {
 		return info.parse();
 	}
@@ -92,7 +107,6 @@ namespace game {
 	
 		map[updated].destroy();
 	
-		map.empty(koordinates);
 		map.change(updated, *this);
 	
 		vector::increment(koordinates, moveDimension, to, map.dimensionSizeGet(moveDimension));
@@ -190,6 +204,7 @@ namespace game {
 			width *= size[i];
 		}
 	
+		map[index].destroy();
 		map[index] = assign;
 	}
 	
@@ -266,8 +281,6 @@ namespace game {
 	
 		u8 result = to.move(ent);
 		if (result == 1) { // emplacement
-			nothing temp(updated);
-			map.change(updated, temp);
 			map.change(updated, ent);
 	
 			vector::increment(koordinates, act.moveDimensionGet(), act.toGet(), map.dimensionSizeGet(act.moveDimensionGet()));
@@ -282,6 +295,10 @@ namespace game {
 	
 		return false;
 	};
+
+	bool player::deadGet() const {
+		return ent.deadGet();
+	}
 	
 	bool player::wonGet() const {
 		return won;

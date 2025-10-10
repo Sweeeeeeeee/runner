@@ -32,17 +32,17 @@ namespace game {
 	
 		public:
 			object(std::vector<u16> _koordinates_, u8 _type_, u16 _groupId_);
-
+			
 			// manages non map entities move
-			virtual u8 move(playerEnt& ent);
+			u8 move(playerEnt& ent); // should be an interface if cpp was any of a language, fuck u idiot who made this bullshit language
 	
 			// moves itself
 			//
 			// return value, true - destroy the object, false - keep the object
-			virtual bool perform(field& map);
+			bool perform(field& map); // same as move
 	
 			// call of element to destroy itself
-			virtual void destroy();
+			void destroy(); // same as move
 	
 			data::metaData infoGet() const;
 	};
@@ -150,7 +150,6 @@ namespace game {
 	
 		public:
 			field(std::vector<u16>& _size_);
-			bool empty(std::vector<u16>& at) const;
 			void change(std::vector<u16>& at, object& assign);
 	
 			u8 dimensionsGet() const;
