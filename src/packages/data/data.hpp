@@ -6,11 +6,11 @@
 using namespace type;
 
 namespace data {
-	struct metaData {
+	struct objectData {
 		u8 type;
 		u16 color;
 
-		metaData(u8 _type_, u16 _color_);
+		objectData(u8 _type_, u16 _color_);
 	};
 }
 
