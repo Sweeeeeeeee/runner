@@ -249,10 +249,26 @@ namespace game {
 		for (u8 i = 0; i < _size_.size(); ++i) {
 			totalSize *= _size_[i];
 		}
-	
+
+		map.resize(totalSize);
+
 		std::vector<u16> tempKoordinates(_size_.size(), 0);
-		nothing tempObject(tempKoordinates);
-		map.resize(totalSize, &tempObject);
+		for (int i = 0; i < map.size(); ++i) {
+			nothing* obj = new nothing(tempKoordinates);
+			
+			map[i] = obj;
+			toProcess.push(obj);
+		}
+	}
+
+	object* field::process() {
+		if (toProcess.empty()) {
+			return nullptr;
+		}
+
+		object* temp = toProcess.front();
+		toProcess.pop();
+		return temp;
 	}
 
 	void field::change(const std::vector<u16>& at, object& assign) {
@@ -271,7 +287,7 @@ namespace game {
 	u16 field::dimensionSizeGet(u8 id) const {
 		return size[id];
 	}
-	
+
 	object& field::operator [](const std::vector<u16>& at) {
 		return *map[access(at)];
 	}
@@ -282,14 +298,19 @@ namespace game {
 		map(size),
 		players(_players_),
 		objects(_objects_) {
+
+		for (object* obj = map.process(); obj != nullptr; obj = map.process()) {
+			objects.push_back(*obj);
+			activeObjects.push_back(obj);
+		}
 	
-		for (u8 i = 0; i < _players_.size(); ++i) {
+		for (u8 i = 0; i < players.size(); ++i) {
 			activePlayers.push_back(&players[i]);
-	
+
 			map.change(players[i].where(), players[i]);
 		}
 	
-		for (u8 i = 0; i < objects.size(); ++i) {
+		for (u8 i = 0; i < _objects_.size(); ++i) {
 			activeObjects.push_back(&objects[i]);
 
 			map.change(objects[i].where(), objects[i]);
@@ -306,6 +327,24 @@ namespace game {
 				activePlayers.erase(activePlayers.begin() + i);
 			}else {
 				++i;
+			}
+
+			for (object* obj = map.process(); obj != nullptr; obj = map.process()) {
+				objects.push_back(*obj);
+				activeObjects.push_back(obj);
+			}
+		}
+
+		for (u8 i = 0; i < activeObjects.size(); ) {
+			if ((*activeObjects[i]).perform(map)) {
+				activeObjects.erase(activeObjects.begin() + i);
+			}else {
+				++i;
+			}
+
+			for (object* obj = map.process(); obj != nullptr; obj = map.process()) {
+				objects.push_back(*obj);
+				activeObjects.push_back(obj);
 			}
 		}
 	

@@ -2,6 +2,7 @@
 #define RUNNER_HPP
 
 #include <vector>
+#include <queue>
 
 #include "data.hpp"
 #include "type.hpp"
@@ -10,8 +11,7 @@
 using namespace type;
 
 namespace game {
-	// cyclic class defenition
-	
+	// cyclic class defenition	
 	class nothing;
 	class wall;
 	class hell;
@@ -153,10 +153,14 @@ namespace game {
 	
 			std::vector<object*> map;
 
+			std::queue<object*> toProcess;
+
 			u64 access(const std::vector<u16>& at) const;
 	
 		public:
 			field(const std::vector<u16>& _size_);
+
+			object* process();
 
 			void change(const std::vector<u16>& at, object& assign);
 			void empty(const std::vector<u16>& at);

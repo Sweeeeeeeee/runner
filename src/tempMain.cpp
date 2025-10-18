@@ -27,8 +27,6 @@ void output(game::game& g, std::vector<u16>& size) {
 int main() {
 	std::vector<u16> size = {2, 3};
 
-	game::field map(size);
-
 	std::vector<u16> koordinates1 = {0, 0};
 	std::vector<u16> koordinates2 = {0, 1};
 	std::vector<game::player> players = {game::player(koordinates1, 0), game::player(koordinates2, 1)};
