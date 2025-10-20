@@ -48,11 +48,11 @@ namespace game {
 			const std::vector<u16>& where() const;
 
 			// should be an interface if cpp was any of a language, fuck u idiot who made this bullshit language
-			bool interact(object& other);
+			virtual bool interact(object& other);
 
-			bool perform(field& map);
+			virtual bool perform(field& map);
 	
-			void destroy();
+			virtual void destroy();
 	
 			const data::objectData& informationGet() const;
 	};
@@ -62,7 +62,7 @@ namespace game {
 		public:
 			nothing(const std::vector<u16>& _koordinates_);
 	
-			bool interact(object& other);
+			bool interact(object& other) override;
 	
 			bool perform(field& map);
 	};
@@ -72,10 +72,10 @@ namespace game {
 		public:
 			wall(const std::vector<u16>& _koordinates_);
 	
-			bool interact(object& other);
+			bool interact(object& other) override;
 			bool interact(zone& other);
 
-			bool perform(field& map);
+			bool perform(field& map) override;
 	};
 	
 	// kills evrything
@@ -83,11 +83,11 @@ namespace game {
 		public:
 			hell(const std::vector<u16>& _koordinates_);
 	
-			bool interact(object& other);
+			bool interact(object& other) override;
 			bool interact(zone& other);
 			bool interact(player& other);
 	
-			bool perform(field& map);
+			bool perform(field& map) override;
 	};
 	
 	// proclaims one a victor
@@ -95,11 +95,11 @@ namespace game {
 		public:
 			heaven(const std::vector<u16>& _koordinates_);
 	
-			bool interact(object& other);
+			bool interact(object& other) override;
 			bool interact(zone& other);
 			bool interact(player& other);
 	
-			bool perform(field& map);
+			bool perform(field& map) override;
 	};
 
 	// moving death zone
@@ -110,10 +110,10 @@ namespace game {
 		public:
 			zone(const std::vector<u16>& koordinates, u8 _moveDimension_, i32 _to_);
 	
-			bool interact(object& other);
+			bool interact(object& other) override;
 			bool interact(player& other);
 	
-			bool perform(field& map);
+			bool perform(field& map) override;
 	};
 	
 	// player
@@ -131,12 +131,12 @@ namespace game {
 
 			const std::vector<u16>& where() const;
 
-			bool interact(object& other);
+			bool interact(object& other) override;
 			bool interact(player& other);
 			
 			void save(const moveAction& _action_);
 	
-			bool perform(field& map);
+			bool perform(field& map) override;
 
 			u16 teamGet() const;
 
@@ -161,7 +161,8 @@ namespace game {
 			field(const std::vector<u16>& _size_);
 
 			object* process();
-
+			
+			void move(const std::vector<u16>& from, std::vector<u16>& to);
 			void change(const std::vector<u16>& at, object& assign);
 			void empty(const std::vector<u16>& at);
 	
