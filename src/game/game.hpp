@@ -20,18 +20,17 @@ namespace game {
 	class player;
 
 	class field;
-	
+
 	class moveAction {
 		private:
-			u8 dimension;
-			i32 to;
-	
+			std::vector<i32> by;
+
 		public:
-			moveAction(u8 _dimension_, i32 _to_);
-	
-			u8 dimensionGet() const;
-			i32 toGet() const;
-	};	
+			moveAction(const std::vector<i32>& _by_);
+			moveAction(int bySize);
+
+			const std::vector<i32>& byGet() const;
+	};
 
 	// entities on the map
 	class object {
@@ -56,7 +55,7 @@ namespace game {
 	
 			const data::objectData& informationGet() const;
 	};
-	
+
 	// empty sapce
 	class nothing : public object {
 		public:
@@ -66,7 +65,7 @@ namespace game {
 	
 			bool perform(field& map);
 	};
-	
+
 	// non breachable wall
 	class wall : public object {
 		public:
@@ -108,8 +107,8 @@ namespace game {
 			moveAction action;
 	
 		public:
-			zone(const std::vector<u16>& koordinates, u8 _moveDimension_, i32 _to_);
-	
+			zone(const std::vector<u16>& koordinates, moveAction& action);
+
 			bool interact(object& other) override;
 			bool interact(player& other);
 	
@@ -133,9 +132,9 @@ namespace game {
 
 			bool interact(object& other) override;
 			bool interact(player& other);
-			
+
 			void save(const moveAction& _action_);
-	
+
 			bool perform(field& map) override;
 
 			u16 teamGet() const;
@@ -145,7 +144,7 @@ namespace game {
 			void win();
 			bool wonGet() const;
 	};
-	
+
 	// map
 	class field {
 		private:
@@ -162,12 +161,12 @@ namespace game {
 
 			object* process();
 			
-			void move(const std::vector<u16>& from, std::vector<u16>& to);
 			void change(const std::vector<u16>& at, object& assign);
 			void empty(const std::vector<u16>& at);
+			void move(const std::vector<u16>& from, std::vector<u16>& to);
 	
-			u8 dimensionsGet() const;
-			u16 dimensionSizeGet(u8 id) const;
+			const std::vector<u16>& sizeGet() const;
+
 			object& operator [](const std::vector<u16>& at);
 	};
 		
@@ -189,7 +188,7 @@ namespace game {
 			game(const std::vector<u16>& size, const std::vector<player>& _players_, const std::vector<object>& _objects_);
 			void step();
 	
-			void save(u16 id, const moveAction& action);
+			void save(u16 id, const moveAction& _action_);
 	
 			bool gameEndedGet() const;
 	

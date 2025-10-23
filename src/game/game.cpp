@@ -1,17 +1,16 @@
 #include "game.hpp"
 
 namespace game {
-	moveAction::moveAction(u8 _dimension_, i32 _to_) : 
-		dimension(_dimension_),
-		to(_to_) {
+	moveAction::moveAction(const std::vector<i32>& _by_) : 
+		by(_by_) {
+	}
+
+	moveAction::moveAction(int bySize) : 
+		by(std::vector<i32>(bySize)) {
 	}
 	
-	u8 moveAction::dimensionGet() const {
-		return dimension;
-	}
-	
-	i32 moveAction::toGet() const {
-		return to;
+	const std::vector<i32>& moveAction::byGet() const {
+		return by;
 	}
 
 	object::object(const std::vector<u16>& _koordinates_, u8 type, u16 groupId) : 
@@ -52,7 +51,7 @@ namespace game {
 	
 	bool nothing::perform(field& map) {
 		return false;
-	}	
+	}
 	
 	wall::wall(const std::vector<u16>& _koordinates_) :
 		object(_koordinates_, 1, 0) {
@@ -123,9 +122,9 @@ namespace game {
 		return false;
 	}
 		
-	zone::zone(const std::vector<u16>& _koordinates_, u8 _moveDimension_, i32 _to_) : 
+	zone::zone(const std::vector<u16>& _koordinates_, moveAction& _action_) : 
 		object(_koordinates_, 1, 2),
-		action(_moveDimension_, _to_) {
+		action(_action_) {
 	}
 
 	bool zone::interact(object& other) {
@@ -145,28 +144,24 @@ namespace game {
 			return true;
 		}
 
-		if (action.toGet() == 0) {
-			return destroyObject;
-		}
-
 		std::vector<u16> updated = koordinates;
 
-		vector::increment(updated, action.dimensionGet(), action.toGet(), map.dimensionSizeGet(action.dimensionGet()));
+		vector::increment(updated, action.byGet(), map.sizeGet());
 
-		if (map[updated].interact(*this)) {
+		if (!vector::equal(koordinates, updated) && map[updated].interact(*this)) {
 			map.move(koordinates, updated);
-			vector::increment(koordinates, action.dimensionGet(), action.toGet(), map.dimensionSizeGet(action.dimensionGet()));
+			koordinates = updated;
 		}
 
 		return destroyObject;
 	}
-	
+
 	player::player(const std::vector<u16>& _koordinates_, u16 _team_) : 
 		dead(false), 
 		won(false), 
 		object(_koordinates_, 2, _team_),
 		team(_team_),
-		action(0, 0) {
+		action(koordinates.size()) {
 	}
 
 	const std::vector<u16>& player::where() const {
@@ -202,22 +197,18 @@ namespace game {
 			return true;
 		}
 
-		if (action.toGet() == 0) {
-			return destroyObject;
-		}
-
 		std::vector<u16> updated = koordinates;
 
-		vector::increment(updated, action.dimensionGet(), action.toGet(), map.dimensionSizeGet(action.dimensionGet()));
+		vector::increment(updated, action.byGet(), map.sizeGet());
 
-		if (map[updated].interact(*this)) {
+		if (!vector::equal(koordinates, updated) && map[updated].interact(*this)) {
 			map.move(koordinates, updated);
-			vector::increment(koordinates, action.dimensionGet(), action.toGet(), map.dimensionSizeGet(action.dimensionGet()));
+			koordinates = updated;
 		}
 
 		return destroyObject;
 	};
-	
+
 	u16 player::teamGet() const {
 		return team;
 	}
@@ -298,12 +289,8 @@ namespace game {
 		toProcess.push(obj);
 	}
 	
-	u8 field::dimensionsGet() const {
-		return size.size();
-	};
-	
-	u16 field::dimensionSizeGet(u8 id) const {
-		return size[id];
+	const std::vector<u16>& field::sizeGet() const {
+		return size;
 	}
 
 	object& field::operator [](const std::vector<u16>& at) {

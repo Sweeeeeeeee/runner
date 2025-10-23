@@ -36,14 +36,15 @@ int main() {
 	game::game g(size, players, objects);
 
 	for (; !g.gameEndedGet(); ) {
-		int D1, D2;
-		int To1, To2;
+		int x1, y1, x2, y2;
 
-		std::cin >> D1 >> To1;
-		std::cin >> D2 >> To2;
+		std::cin >> x1 >> y1;
+		std::cin >> x2 >> y2;
 
-		g.save(0, game::moveAction(D1, To1));
-		g.save(1, game::moveAction(D2, To2));
+		std::vector<i32> mp1 = {x1, y1};
+		std::vector<i32> mp2 = {x2, y2};
+		g.save(0, game::moveAction(mp1));
+		g.save(1, game::moveAction(mp2));
 
 		g.step();
 
