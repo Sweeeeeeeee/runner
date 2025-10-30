@@ -34,12 +34,11 @@ namespace game {
 
 	// entities on the map
 	class object {
-		protected:
-			std::vector<u16> koordinates;
-	
+		protected:	
 			bool destroyObject;
 
 			data::objectData information;
+			uint64 time;
 	
 		public:
 			object(const std::vector<u16>& _koordinates_, u8 _type_, u16 _groupId_);
@@ -53,7 +52,7 @@ namespace game {
 	
 			virtual void destroy();
 	
-			const data::objectData& informationGet() const;
+			const std::pair<data::objectData, u64>& informationGet() const;
 	};
 
 	// empty sapce
@@ -148,7 +147,9 @@ namespace game {
 	// map
 	class field {
 		private:
-			std::vector<u16> size;
+			io::chan& writer;
+
+			const std::vector<u16> size;
 	
 			std::vector<object*> map;
 
@@ -157,10 +158,10 @@ namespace game {
 			u64 access(const std::vector<u16>& at) const;
 	
 		public:
-			field(const std::vector<u16>& _size_);
+			field(io::chan& _writer_, const std::vector<u16>& _size_);
 
 			object* process();
-			
+	
 			void change(const std::vector<u16>& at, object& assign);
 			void empty(const std::vector<u16>& at);
 			void move(const std::vector<u16>& from, std::vector<u16>& to);
@@ -173,6 +174,8 @@ namespace game {
 	// game manager
 	class game {
 		private:
+			io::writer& writer;
+
 			u64 moveNumber;
 			bool gameEnded;
 	
@@ -185,17 +188,15 @@ namespace game {
 			field map;
 	
 		public:
-			game(const std::vector<u16>& size, const std::vector<player>& _players_, const std::vector<object>& _objects_);
+			game(io::writer& _writer_, const std::vector<u16>& size, const std::vector<player>& _players_, const std::vector<object>& _objects_);
 			void step();
-	
+
 			void save(u16 id, const moveAction& _action_);
 	
 			bool gameEndedGet() const;
 	
 			bool playerDeadGet(u16 id) const;
-			bool playerWonGet(u16 id) const;
-	
-			const data::objectData& render(const std::vector<u16>& at);
+			bool playerWonGet(u16 id) const;	
 	};
 }
 
