@@ -13,7 +13,7 @@ namespace game {
 		return by;
 	}
 
-	object::object(const std::vector<u16>& _koordinates_, u8 type, u16 groupId) : 
+	object::object(const std::vector<u16>& koordinates, const u8 type, const u16 groupId) : 
 		destroyObject(false),
 		information(koordinates, type, groupId) {
 	}
@@ -34,12 +34,12 @@ namespace game {
 		destroyObject = true;
 	}
 
-	const std::pair<data::objectData&, u64> object::informationGet() const {
-		return {std::ref(information), time};
+	const std::pair<const data::objectData&, u64> object::informationGet() const {
+		return {std::ref(information), information.timeGet()};
 	}
 
-	nothing::nothing(const std::vector<u16>& _koordinates_) :
-		object(_koordinates_, 0, 0) {
+	nothing::nothing(const std::vector<u16>& koordinates) :
+		object(koordinates, 0, 0) {
 	}
 
 	bool nothing::interact(object& other) {
@@ -244,7 +244,7 @@ namespace game {
 		return index;
 	}
 	
-	field::field(io::writer<const std::pair<objectData&, u64>>& _writer_, const std::vector<u16>& _size_) : 
+	field::field(io::writer<const data::objectData> _writer_, const std::vector<u16>& _size_) : 
 		time(0),
 		writer(_writer_),
 		size(_size_) {

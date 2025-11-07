@@ -39,6 +39,10 @@ namespace mod {
 		io::reader<event::input> reader = eventInChan.readerGet();
 		io::writer<event::output> writer = eventOutChan.writerGet();
 
+		for (; !g.gameEnded(); ) {
+			reader.pop().process(g);
+		}
 
+		writer.push(event::crash);
 	}
 }

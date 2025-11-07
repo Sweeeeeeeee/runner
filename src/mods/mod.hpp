@@ -18,11 +18,11 @@ namespace mod {
 			io::chan<event::output>& eventOutChan;
 
 		public:
-			io::chanWriter<event::input>& eventWriterGet();
-			io::chanReader<event::output>& eventReaderGet();
+			io::writer<event::input>& eventWriterGet();
+			io::reader<event::output>& eventReaderGet();
 
 			const std::vector<u16>& sizeGet() const;
-			const std::pair<data::objectData&, u64> render();
+			const data::objectData& render();
 
 			virtual void run() = 0;
 	};
@@ -32,9 +32,6 @@ namespace mod {
 	};
 
 	class openWorld : public mod {
-		private:
-			
-
 		public:
 			openWorld(openWorldConfig& setup);
 			~openWorld();

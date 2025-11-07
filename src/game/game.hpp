@@ -1,12 +1,14 @@
 #ifndef RUNNER_HPP
 #define RUNNER_HPP
 
-#include <vector>
-#include <queue>
-
 #include "data.hpp"
 #include "type.hpp"
 #include "vector.hpp"
+#include "io.hpp"
+#include "event.hpp"
+
+#include <vector>
+#include <queue>
 
 using namespace type;
 
@@ -23,13 +25,13 @@ namespace game {
 
 	class moveAction {
 		private:
-			std::vector<i32> by;
+			std::vector<const i32> by;
 
 		public:
-			moveAction(const std::vector<i32>& _by_);
-			moveAction(int bySize);
+			moveAction(const std::vector<const i32>& _by_);
+			moveAction(const u8& bySize);
 
-			const std::vector<i32>& byGet() const;
+			const std::vector<const i32>& byGet() const;
 	};
 
 	// entities on the map
@@ -37,13 +39,13 @@ namespace game {
 		protected:	
 			bool destroyObject;
 
-			data::objectData information;
-			uint64 time;
-	
+			data::objectDataManager information;
+			u64 time;
+
 		public:
-			object(const std::vector<u16>& _koordinates_, u8 _type_, u16 _groupId_);
+			object(const std::vector<const u16>& _koordinates_, const u8& _type_, const u16& _groupId_);
 		
-			const std::vector<u16>& where() const;
+			const std::vector<const u16>& where() const;
 
 			// should be an interface if cpp was any of a language, fuck u idiot who made this bullshit language
 			virtual bool interact(object& other);
@@ -52,13 +54,13 @@ namespace game {
 	
 			virtual void destroy();
 	
-			const std::pair<data::objectData, u64>& informationGet() const;
+			const data::objectData informationGet() const;
 	};
 
 	// empty sapce
 	class nothing : public object {
 		public:
-			nothing(const std::vector<u16>& _koordinates_);
+			nothing(const std::vector<const u16>& _koordinates_);
 	
 			bool interact(object& other) override;
 	
@@ -68,7 +70,7 @@ namespace game {
 	// non breachable wall
 	class wall : public object {
 		public:
-			wall(const std::vector<u16>& _koordinates_);
+			wall(const std::vector<const u16>& _koordinates_);
 	
 			bool interact(object& other) override;
 			bool interact(zone& other);
@@ -79,7 +81,7 @@ namespace game {
 	// kills evrything
 	class hell : public object {
 		public:
-			hell(const std::vector<u16>& _koordinates_);
+			hell(const std::vector<const u16>& _koordinates_);
 	
 			bool interact(object& other) override;
 			bool interact(zone& other);
@@ -91,7 +93,7 @@ namespace game {
 	// proclaims one a victor
 	class heaven : public object {
 		public:
-			heaven(const std::vector<u16>& _koordinates_);
+			heaven(const std::vector<const u16>& _koordinates_);
 	
 			bool interact(object& other) override;
 			bool interact(zone& other);
@@ -106,7 +108,7 @@ namespace game {
 			moveAction action;
 	
 		public:
-			zone(const std::vector<u16>& koordinates, moveAction& action);
+			zone(const std::vector<const u16>& koordinates, const moveAction& action);
 
 			bool interact(object& other) override;
 			bool interact(player& other);
@@ -125,7 +127,7 @@ namespace game {
 			moveAction action;
 	
 		public:
-			player(const std::vector<u16>& _koordinates_, u16 _team_);
+			player(const std::vector<const u16>& _koordinates_, const u16& _team_);
 
 			const std::vector<u16>& where() const;
 
@@ -147,39 +149,39 @@ namespace game {
 	// map
 	class field {
 		private:
-			io::chan& writer;
+			const io::chan<event::output>& writer;
 
-			const std::vector<u16> size;
+			const std::vector<const u16> size;
 	
-			std::vector<object*> map;
+			const std::vector<object*> map;
 
 			std::queue<object*> toProcess;
 
-			u64 access(const std::vector<u16>& at) const;
+			u64 access(const std::vector<const u16>& at) const;
 	
 		public:
-			field(io::chan& _writer_, const std::vector<u16>& _size_);
+			field(const io::chan<const event::output>& _writer_, const std::vector<const u16>& _size_);
 
 			object* process();
 	
-			void change(const std::vector<u16>& at, object& assign);
-			void empty(const std::vector<u16>& at);
-			void move(const std::vector<u16>& from, std::vector<u16>& to);
+			void change(const std::vector<const u16>& at, const object& assign);
+			void empty(const std::vector<const u16>& at);
+			void move(const std::vector<const u16>& from, std::vector<const u16>& to);
 	
-			const std::vector<u16>& sizeGet() const;
+			const std::vector<const u16>& sizeGet() const;
 
-			object& operator [](const std::vector<u16>& at);
+			object& operator [](const std::vector<const u16>& at);
 	};
 		
 	// game manager
 	class game {
 		private:
-			io::writer& writer;
+			const io::writer<const event::output>& writer;
 
 			u64 moveNumber;
 			bool gameEnded;
 	
-			std::vector<player> players;
+			const std::vector<player> players;
 			std::vector<player*> activePlayers;
 	
 			std::vector<object> objects;
@@ -188,15 +190,15 @@ namespace game {
 			field map;
 	
 		public:
-			game(io::writer& _writer_, const std::vector<u16>& size, const std::vector<player>& _players_, const std::vector<object>& _objects_);
+			game(const io::writer<const event::output>& _writer_, const std::vector<const u16>& size, const std::vector<player>& _players_, const std::vector<object>& _objects_);
 			void step();
 
-			void save(u16 id, const moveAction& _action_);
+			void save(const u16& id, const moveAction& _action_);
 	
 			bool gameEndedGet() const;
 	
-			bool playerDeadGet(u16 id) const;
-			bool playerWonGet(u16 id) const;	
+			bool playerDeadGet(const u16& id) const;
+			bool playerWonGet(const u16& id) const;	
 	};
 }
 

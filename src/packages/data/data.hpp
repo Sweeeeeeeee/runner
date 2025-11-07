@@ -3,31 +3,63 @@
 
 #include "type.hpp"
 
+#include <vector>
+#include <optional>
+
 using namespace type;
 
 namespace data {
-	class objectData {
-		private:
-			std::vector<std::vector<u16>> koordinates;
+	class objectData;
 
-			std::vector<u8> type1;
-			std::vector<u16> type2;
+	class objectDataManager {
+		private:
+			const std::vector<const std::pair<const u64, const std::optional<const std::vector<const u16>>>> koordinates;
+
+			const std::vector<const std::pair<const u64, const std::optional<const u8>>> type1;
+			const std::vector<const std::pair<const u64, const std::optional<const u16>>> type2;
+
+			u64 lastKoordinates;
+			u64 lastType1;
+			u64 lastType2;
+
+			u64 time;
 
 		public:
-			objectData(std::vector<u16>& _koordinates_, u8 _type1_, u16 _type2_);
+			objectDataManager(const std::vector<u16>& _koordinates_, const u8& _type1_, const u16& _type2_);
 
-			const std::vector<u16>& koordinatesGet(u64 time);
-			const std::vector<u16>& koordinatesGetLatest();
+			const std::vector<u16>& koordinatesGet(const u64& time) const;
+			const std::vector<u16>& koordinatesGetLatest() const;
 
-			u8 type1Get(u64 time);
-			u8 type1GetLatest();
-			u16 type2Get(u64 time);
-			u16 type2GetLatest();
+			const u8& type1Get(const u64& time) const;
+			const u8& type1GetLatest() const;
+			const u16& type2Get(const u64& time) const;
+			const u16& type2GetLatest() const;
 
-			void koordinatesChange(std::vector<u16>& to);
+			void koordinatesChange(const std::vector<u16>& to);
 
-			void type1Change(u8 to);
-			void type2Change(u16 to);
+			void type1Change(const u8& to);
+			void type2Change(const u16& to);
+
+			const u64 timeGet() const {
+				return time;
+			}
+
+			const objectData save() const;
+	};
+
+	class objectData {
+		private:
+			const objectDataManager& parent;
+
+			const u64 time;
+
+		public:
+			objectData(const objectDataManager& _parent_);
+
+			const std::vector<const u16>& koordinatesGet() const;
+			
+			const u8& type1Get() const;
+			const u16& type2Get() const;
 	};
 }
 

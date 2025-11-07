@@ -1,7 +1,7 @@
 #include "io.hpp"
 
 namespace io {
-	writer(std::queue<T>& _queue_, std::mutex& _mutex_, std::conditional_variable& _condition_) :
+	writer(std::queue<T>& _queue_, std::mutex& _mutex_, std::condition_variable& _condition_) :
 		queue(_queue_),
 		mutex(_mutex_),
 		condition(_condition_) {
@@ -13,7 +13,7 @@ namespace io {
 		condition.notify_one();
 	}
 
-	reader(std::queue<T>& _queue_, std::mutex& _mutex_, std::conditional_variable& _condition_) :
+	reader(std::queue<T>& _queue_, std::mutex& _mutex_, std::condition_variable& _condition_) :
 		queue(_queue_),
 		mutex(_mutex_),
 		condition(_condition_) {
