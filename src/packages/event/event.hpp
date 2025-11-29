@@ -8,17 +8,19 @@
 using namespace type;
 
 namespace event {
-	template <typename T>class input {
+	template<typename T> class input {
 		public:
-			virtual void process(T& g) = 0;
+			void process(T& g);
 	};
 
-	template <typename T>class move : public input<T> {
+	template<typename T> class move : public input<T> {
 		private:
 			u16 id;
-			std::vector<u16> by;
+			const std::vector<u16> by;
 
 		public:
+			move(const u16 _id_, const std::vector<u16>& _by_);
+
 			void process(T& g) override;
 	};
 

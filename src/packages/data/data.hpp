@@ -13,10 +13,10 @@ namespace data {
 
 	class objectDataManager {
 		private:
-			const std::vector<const std::pair<const u64, const std::optional<const std::vector<const u16>>>> koordinates;
+			std::vector<const std::pair<u64, const std::optional<std::vector<u16>>>> koordinates;
 
-			const std::vector<const std::pair<const u64, const std::optional<const u8>>> type1;
-			const std::vector<const std::pair<const u64, const std::optional<const u16>>> type2;
+			std::vector<const std::pair<u64, const std::optional<u8>>> type1;
+			std::vector<const std::pair<u64, const std::optional<u16>>> type2;
 
 			u64 lastKoordinates;
 			u64 lastType1;
@@ -25,26 +25,24 @@ namespace data {
 			u64 time;
 
 		public:
-			objectDataManager(const std::vector<u16>& _koordinates_, const u8& _type1_, const u16& _type2_);
+			objectDataManager(const std::vector<u16>& _koordinates_, const u8 _type1_, const u16 _type2_);
 
-			const std::vector<u16>& koordinatesGet(const u64& time) const;
+			const std::vector<u16>& koordinatesGet(const u64 time) const;
 			const std::vector<u16>& koordinatesGetLatest() const;
 
-			const u8& type1Get(const u64& time) const;
-			const u8& type1GetLatest() const;
-			const u16& type2Get(const u64& time) const;
-			const u16& type2GetLatest() const;
+			u8 type1Get(const u64 time) const;
+			u8 type1GetLatest() const;
+			u16 type2Get(const u64 time) const;
+			u16 type2GetLatest() const;
 
 			void koordinatesChange(const std::vector<u16>& to);
 
-			void type1Change(const u8& to);
-			void type2Change(const u16& to);
+			void type1Change(const u8 to);
+			void type2Change(const u16 to);
 
-			const u64 timeGet() const {
-				return time;
-			}
+			u64 timeGet() const;
 
-			const objectData save() const;
+			objectData save() const;
 	};
 
 	class objectData {
@@ -56,10 +54,10 @@ namespace data {
 		public:
 			objectData(const objectDataManager& _parent_);
 
-			const std::vector<const u16>& koordinatesGet() const;
+			const std::vector<u16>& koordinatesGet() const;
 			
-			const u8& type1Get() const;
-			const u16& type2Get() const;
+			u8 type1Get() const;
+			u16 type2Get() const;
 	};
 }
 

@@ -1,11 +1,11 @@
 #include "mod.hpp"
 
 namespace mod {
-	io::writer<event::input>& eventWriterGet() {
+	io::writer<event::input>& mod::eventWriterGet() {
 		return eventInChan.writerGet();
 	}
 
-	io::reader<event::output>& eventReaderGet() {
+	io::reader<event::output>& mod::eventReaderGet() {
 		return eventOutChan.readerGet();
 	}
 
@@ -13,7 +13,7 @@ namespace mod {
 		return g.sizeGet();
 	}
 
-	const std::pair<data::objectData&, u64> mod::render() {
+	const data::objectData& mod::render() {
 		return updates.pop();
 	}	
 
@@ -36,10 +36,10 @@ namespace mod {
 	}
 
 	void openWorld::run() {
-		io::reader<event::input> reader = eventInChan.readerGet();
+		io::reader<event::input<game::game>> reader = eventInChan.readerGet();
 		io::writer<event::output> writer = eventOutChan.writerGet();
 
-		for (; !g.gameEnded(); ) {
+		for (; !(*g).gameEnded(); ) {
 			reader.pop().process(g);
 		}
 

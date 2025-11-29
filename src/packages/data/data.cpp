@@ -1,14 +1,14 @@
 #include "data.hpp"
 
 namespace data {
-	objectDataManager::objectData(const std::vector<u16>& _koordinates_, const u8 _type1_, const u16 _type2_) :
+	objectDataManager::objectDataManager(const std::vector<u16>& _koordinates_, const u8 _type1_, const u16 _type2_) :
 		time(0),
 		koordinates(1, {0, _koordinates_}),
 		type1(1, {0, _type1_}),
 		type2(1, {0, _type2_}) {
 	}
 
-	const std::vector<u16>& objectDataManager::koordinatesGet(u64 time) const {
+	const std::vector<u16>& objectDataManager::koordinatesGet(const u64 time) const {
 		return *koordinates[koordinates[time].first].second;
 	}
 	
@@ -16,19 +16,19 @@ namespace data {
 		return *koordinates[koordinates.back().first].second;
 	}
 
-	const u8& objectDataManager::type1Get(u64 time) const {
+	u8 objectDataManager::type1Get(const u64 time) const {
 		return *type1[type1[time].first].second;
 	}
 
-	const u8& objectDataManager::type1GetLatest() const {
+	u8 objectDataManager::type1GetLatest() const {
 		return *type1[type1.back().first].second;
 	}
 	
-	const u16& objectDataManager::type2Get(u64 time) const {
+	u16 objectDataManager::type2Get(const u64 time) const {
 		return *type2[type2[time].first].second;
 	}
 	
-	const u16& objectDataManager::type2GetLatest() const {
+	u16 objectDataManager::type2GetLatest() const {
 		return *type2[type2.back().first].second;
 	}
 
@@ -56,8 +56,12 @@ namespace data {
 		type2.push_back({lastType2, to});
 	}
 
-	const objectData objectDataManager::save() const {
-		return objectData(&this);
+	u64 objectDataManager::timeGet() const {
+		return time;
+	}
+
+	objectData objectDataManager::save() const {
+		return objectData(*this);
 	}
 
 	objectData::objectData(const objectDataManager& _parent_) :
@@ -65,15 +69,15 @@ namespace data {
 		time(parent.timeGet()) {
 	}
 
-	const std::vector<const u16>& objectData::koordinatesGet() const {
+	const std::vector<u16>& objectData::koordinatesGet() const {
 		return parent.koordinatesGet(time);
 	}
 
-	const u8& objectData::type1Get() const {
+	u8 objectData::type1Get() const {
 		return parent.type1Get(time);
 	}
 
-	const u16& objectData::type2Get() const {
+	u16 objectData::type2Get() const {
 		return parent.type2Get(time);
 	}
 }

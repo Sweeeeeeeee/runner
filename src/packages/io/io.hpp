@@ -16,7 +16,7 @@ namespace io {
 		public:
 			writer(std::queue<T>& _queue_, std::mutex& _mutex_, std::condition_variable& _condition_);
 			
-			void push(T value);
+			void push(T&& value);
 	};
 
 	template<typename T> class reader {

@@ -5,10 +5,16 @@ namespace game {
 		by(_by_) {
 	}
 
-	moveAction::moveAction(int bySize) : 
+	moveAction::moveAction(const u8 bySize) : 
 		by(std::vector<i32>(bySize)) {
 	}
 	
+	moveAction& moveAction::operator=(const moveAction& other) {
+    	const_cast<std::vector<i32>&>(by) = other.by;
+        
+		return *this;
+    }
+
 	const std::vector<i32>& moveAction::byGet() const {
 		return by;
 	}
@@ -34,8 +40,8 @@ namespace game {
 		destroyObject = true;
 	}
 
-	const std::pair<const data::objectData&, u64> object::informationGet() const {
-		return {std::ref(information), information.timeGet()};
+	data::objectData object::informationGet() const {
+		return information.save();
 	}
 
 	nothing::nothing(const std::vector<u16>& koordinates) :
@@ -74,6 +80,7 @@ namespace game {
 		object(_koordinates_, 1, 1) {
 	}
 	
+
 	bool hell::interact(object& other) {
 		return false;
 	}
@@ -121,7 +128,7 @@ namespace game {
 		return false;
 	}
 		
-	zone::zone(const std::vector<u16>& _koordinates_, moveAction& _action_) : 
+	zone::zone(const std::vector<u16>& _koordinates_, const moveAction& _action_) : 
 		object(_koordinates_, 1, 2),
 		action(_action_) {
 	}
@@ -143,7 +150,7 @@ namespace game {
 			return true;
 		}
 
-		std::vector<u16>& koordinates(information.koordinatesGetLatest());
+		const std::vector<u16>& koordinates(information.koordinatesGetLatest());
 
 		std::vector<u16> updated(koordinates);
 
@@ -157,12 +164,12 @@ namespace game {
 		return destroyObject;
 	}
 
-	player::player(const std::vector<u16>& _koordinates_, u16 _team_) : 
+	player::player(const std::vector<u16>& _koordinates_, const u16 _team_) : 
 		dead(false),
 		won(false),
 		object(_koordinates_, 2, _team_),
 		team(_team_),
-		action(koordinates.size()) {
+		action(_koordinates_.size()) {
 	}
 
 	const std::vector<u16>& player::where() const {
@@ -198,7 +205,7 @@ namespace game {
 			return true;
 		}
 
-		std::vector<u16>& koordinates(information.koordinatesGetLatest());
+		const std::vector<u16>& koordinates(information.koordinatesGetLatest());
 
 		std::vector<u16> updated = information.koordinatesGetLatest();
 
@@ -244,8 +251,7 @@ namespace game {
 		return index;
 	}
 	
-	field::field(io::writer<const data::objectData> _writer_, const std::vector<u16>& _size_) : 
-		time(0),
+	field::field(io::writer<data::objectData>& _writer_, const std::vector<u16>& _size_) : 
 		writer(_writer_),
 		size(_size_) {
 		u64 totalSize = 1;
@@ -270,7 +276,7 @@ namespace game {
 			map[i] = obj;
 			toProcess.push(obj);
 
-			writer.push(obj.informtaionGet());
+			writer.push((*obj).informationGet());
 		}
 	}
 
@@ -287,7 +293,7 @@ namespace game {
 	void field::change(const std::vector<u16>& at, object& assign) {
 		map[access(at)] = &assign;
 
-		writer.push(asssign.informationGet());
+		writer.push(assign.informationGet());
 	}
 
 	void field::empty(const std::vector<u16>& at) {
@@ -297,7 +303,7 @@ namespace game {
 		writer.push(temp.informationGet());
 	}
 
-	void field::move(const std::vector<u16>& from, std::vector<u16>& to) {
+	void field::move(const std::vector<u16>& from, const std::vector<u16>& to) {
 		u64 koordinatesFrom = access(from);
 		u64 koordinatesTo = access(to);
 
@@ -319,7 +325,7 @@ namespace game {
 		return *map[access(at)];
 	}
 
-	game::game(io::writer<const std::pair<data::objectData&, u64>>& _writer_, const std::vector<u16>& size, const std::vector<player>& _players_, const std::vector<object>& _objects_) :
+	game::game(io::writer<data::objectData>& _writer_, const std::vector<u16>& size, const std::vector<player>& _players_, const std::vector<object>& _objects_) :
 		moveNumber(0),
 		gameEnded(false),
 		writer(_writer_),
@@ -383,7 +389,7 @@ namespace game {
 		++moveNumber;
 	}
 	
-	void game::save(u16 id, const moveAction& action) {
+	void game::save(const u16 id, const moveAction& action) {
 		if (gameEnded) {
 			return;
 		}
@@ -395,11 +401,11 @@ namespace game {
 		return gameEnded;
 	}
 	
-	bool game::playerDeadGet(u16 id) const {
+	bool game::playerDeadGet(const u16 id) const {
 		return players[id].deadGet();
 	}
 	
-	bool game::playerWonGet(u16 id) const {
+	bool game::playerWonGet(const u16 id) const {
 		return players[id].wonGet();
 	}	
 }

@@ -12,9 +12,9 @@ namespace mod {
 		protected:
 			game::game* g;
 
-			io::chan<const std::pair<data::objectData&, u64>> updates;
+			io::chan<const data::objectData> updates;
 
-			io::chan<event::input>& eventInChan;
+			io::chan<event::input<game::game>>& eventInChan;
 			io::chan<event::output>& eventOutChan;
 
 		public:
@@ -28,7 +28,11 @@ namespace mod {
 	};
 
 	struct openWorldConfig {
-		std::vector<u16> size;
+		const std::vector<u16> size;
+
+		openWorldConfig(const std::vector<u16>& _size_) :
+			size(_size_) {
+		}
 	};
 
 	class openWorld : public mod {
