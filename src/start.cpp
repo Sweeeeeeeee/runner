@@ -8,9 +8,10 @@ int main() {
 	mod::openWorld game(config);
 
 	io::reader<event::output>& reader = game.eventReaderGet();
-	io::writer<event::input>& writer = game.eventWriterGet();
+	io::writer<event::input<game::game>>& writer = game.eventWriterGet();
+	io::reader<data::objectData>& loader = game.loaderGet();
 
 	for (game.run(); ; ) {
-		writer.push(event::move(0, std::vector<type::u16>({0, 0})));
+		writer.push(std::make_unique<event::move<game::game>>(std::move(event::move<game::game>(type::u16(0), std::vector<type::i32>({0, 0})))));
 	}
 }

@@ -10,18 +10,23 @@ using namespace type;
 namespace event {
 	template<typename T> class input {
 		public:
-			void process(T& g);
+			virtual void process(T& g) = 0;
 	};
 
 	template<typename T> class move : public input<T> {
 		private:
 			u16 id;
-			const std::vector<u16> by;
+			const std::vector<i32> by;
 
 		public:
-			move(const u16 _id_, const std::vector<u16>& _by_);
+			move(const u16 _id_, const std::vector<i32>& _by_) :
+				id(_id_),
+				by(_by_) {
+			}
 
-			void process(T& g) override;
+			void process(T& g) override {
+				g.save(id, g.saveCreate(by));
+			}
 	};
 
 	enum outputEvent {

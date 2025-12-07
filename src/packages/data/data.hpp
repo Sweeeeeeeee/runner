@@ -13,10 +13,10 @@ namespace data {
 
 	class objectDataManager {
 		private:
-			std::vector<const std::pair<u64, const std::optional<std::vector<u16>>>> koordinates;
+			std::vector<std::pair<u64, const std::optional<std::vector<u16>>>> koordinates;
 
-			std::vector<const std::pair<u64, const std::optional<u8>>> type1;
-			std::vector<const std::pair<u64, const std::optional<u16>>> type2;
+			std::vector<std::pair<const u64, const std::optional<u8>>> type1;
+			std::vector<std::pair<const u64, const std::optional<u16>>> type2;
 
 			u64 lastKoordinates;
 			u64 lastType1;

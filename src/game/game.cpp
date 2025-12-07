@@ -265,7 +265,7 @@ namespace game {
 		std::vector<u16> tempKoordinates(_size_.size(), 0);
 		u8 step = 0;
 		for (int i = 0; i < map.size(); ++i) {
-			for (int index = i; (index % size.size[step]) == 0 && index != 0; index /= size.size[step]) {
+			for (int index = i; (index % size[step]) == 0 && index != 0; index /= size[step]) {
 				++tempKoordinates[step];
 
 				++step;
@@ -276,7 +276,7 @@ namespace game {
 			map[i] = obj;
 			toProcess.push(obj);
 
-			writer.push((*obj).informationGet());
+			writer.push(std::make_unique<data::objectData>(std::move((*obj).informationGet())));
 		}
 	}
 
@@ -293,14 +293,14 @@ namespace game {
 	void field::change(const std::vector<u16>& at, object& assign) {
 		map[access(at)] = &assign;
 
-		writer.push(assign.informationGet());
+		writer.push(std::make_unique<data::objectData>(std::move(assign.informationGet())));
 	}
 
 	void field::empty(const std::vector<u16>& at) {
 		nothing temp(at);
 		map[access(at)] = &temp;
 
-		writer.push(temp.informationGet());
+		writer.push(std::make_unique<data::objectData>(std::move(temp.informationGet())));
 	}
 
 	void field::move(const std::vector<u16>& from, const std::vector<u16>& to) {
@@ -313,8 +313,8 @@ namespace game {
 		map[koordinatesFrom] = obj;
 		toProcess.push(obj);
 
-		writer.push(map[koordinatesFrom].informationGet());
-		writer.push(map[koordinatesTo].informationGet());
+		writer.push(std::make_unique<data::objectData>(std::move((*map[koordinatesFrom]).informationGet())));
+		writer.push(std::make_unique<data::objectData>(std::move((*map[koordinatesTo]).informationGet())));
 	}
 	
 	const std::vector<u16>& field::sizeGet() const {
@@ -388,7 +388,11 @@ namespace game {
 	
 		++moveNumber;
 	}
-	
+
+	moveAction game::saveCreate(const std::vector<i32>& _by_) {
+		return moveAction(_by_);
+	}
+
 	void game::save(const u16 id, const moveAction& action) {
 		if (gameEnded) {
 			return;

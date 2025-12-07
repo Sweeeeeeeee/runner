@@ -12,17 +12,17 @@ namespace mod {
 		protected:
 			game::game* g;
 
-			io::chan<const data::objectData> updates;
+			io::chan<data::objectData> updates;
 
-			io::chan<event::input<game::game>>& eventInChan;
-			io::chan<event::output>& eventOutChan;
+			io::chan<event::input<game::game>> eventInChan;
+			io::chan<event::output> eventOutChan;
 
 		public:
-			io::writer<event::input>& eventWriterGet();
-			io::reader<event::output>& eventReaderGet();
+			~mod();
 
-			const std::vector<u16>& sizeGet() const;
-			const data::objectData& render();
+			io::writer<event::input<game::game>>& eventWriterGet();
+			io::reader<event::output>& eventReaderGet();
+			io::reader<data::objectData>& loaderGet();
 
 			virtual void run() = 0;
 	};
@@ -36,10 +36,14 @@ namespace mod {
 	};
 
 	class openWorld : public mod {
-		public:
-			openWorld(openWorldConfig& setup);
-			~openWorld();
+		private:
+			const openWorldConfig setup;
 
+		public:
+			openWorld(const openWorldConfig& setup);
+
+			const std::vector<u16>& sizeGet() const;
+			
 			void run();
 	};
 }

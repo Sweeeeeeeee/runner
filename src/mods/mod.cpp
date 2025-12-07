@@ -1,7 +1,13 @@
 #include "mod.hpp"
+#include "io.hpp"
+#include "data.hpp"
 
 namespace mod {
-	io::writer<event::input>& mod::eventWriterGet() {
+	mod::~mod() {
+		delete g;
+	}
+
+	io::writer<event::input<game::game>>& mod::eventWriterGet() {
 		return eventInChan.writerGet();
 	}
 
@@ -9,15 +15,12 @@ namespace mod {
 		return eventOutChan.readerGet();
 	}
 
-	const std::vector<u16>& mod::sizeGet() const {
-		return g.sizeGet();
+	io::reader<data::objectData>& mod::loaderGet() {
+		return updates.readerGet();
 	}
 
-	const data::objectData& mod::render() {
-		return updates.pop();
-	}	
-
-	openWorld::openWorld(openWorldConfig& setup) {
+	openWorld::openWorld(const openWorldConfig& _setup_) : 
+		setup(_setup_) {
 		std::vector<u16> koordinates(setup.size.size());
 
 		for (int i = 0; i < setup.size.size(); ++i) {
@@ -31,18 +34,18 @@ namespace mod {
 		g = new game::game(updates.writerGet(), setup.size, players, objects);
 	}
 
-	~openWorld::openWorld() {
-		~(*g)();
+	const std::vector<u16>& openWorld::sizeGet() const {
+		return setup.size;
 	}
 
 	void openWorld::run() {
-		io::reader<event::input<game::game>> reader = eventInChan.readerGet();
-		io::writer<event::output> writer = eventOutChan.writerGet();
+		io::reader<event::input<game::game>>& reader = eventInChan.readerGet();
+		io::writer<event::output>& writer = eventOutChan.writerGet();
 
-		for (; !(*g).gameEnded(); ) {
-			reader.pop().process(g);
+		for (; !(*g).gameEndedGet(); ) {
+			(*reader.pop()).process(*g);
 		}
 
-		writer.push(event::crash);
+		writer.push(std::make_unique<event::output>(std::move(event::crash)));
 	}
 }

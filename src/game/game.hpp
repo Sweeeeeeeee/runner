@@ -183,7 +183,7 @@ namespace game {
 			u64 moveNumber;
 			bool gameEnded;
 	
-			const std::vector<player> players;
+			std::vector<player> players;
 			std::vector<player*> activePlayers;
 	
 			std::vector<object> objects;
@@ -195,6 +195,7 @@ namespace game {
 			game(io::writer<data::objectData>& _writer_, const std::vector<u16>& size, const std::vector<player>& _players_, const std::vector<object>& _objects_);
 			void step();
 
+			moveAction saveCreate(const std::vector<i32>& _by_);
 			void save(const u16 id, const moveAction& _action_);
 	
 			bool gameEndedGet() const;
