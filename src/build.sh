@@ -14,7 +14,7 @@ mkdir $tempDirectory
 rm $buildDirectory -r
 mkdir $buildDirectory
 
-for file in $(find . -type f \( -name "*.cpp" -o -name "*.hpp" \)); do
+for file in $(find . -type f \( -name "*.cpp" -o -name "*.hpp" -o -name "*.ec" \)); do
 	cp $file $tempDirectory
 done
 

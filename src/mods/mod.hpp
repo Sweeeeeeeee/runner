@@ -25,6 +25,7 @@ namespace mod {
 			io::reader<data::objectData>& loaderGet();
 
 			virtual void run() = 0;
+			const std::vector<u16>& sizeGet() const;
 	};
 
 	struct openWorldConfig {

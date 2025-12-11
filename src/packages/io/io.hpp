@@ -42,6 +42,12 @@ namespace io {
 				condition(_condition_) {
 			}
 
+			bool empty() {
+				std::unique_lock<std::mutex> lock(mutex);
+				
+				return queue.empty();
+			}
+
 			std::unique_ptr<T> pop() {
 				std::unique_lock<std::mutex> lock(mutex);
 				condition.wait(lock, [this] {
