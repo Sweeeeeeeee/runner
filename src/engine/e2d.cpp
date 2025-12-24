@@ -1,64 +1,65 @@
 #include "e2d.hpp"
 
 namespace engine {
-	e1d::e1d(const config::config& _conf_, mod::mod&& _game_) :
-		engine(_conf_, _game_),
+	e1d::e1d(const config& _conf_, std::unique_ptr<mod::mod> _game_) :
+		engineBase(_conf_, std::move(_game_)),
 		data() {
 
-		if (game.sizeGet().size() != 1) {
+		if ((*game).sizeGet().size() != 1) {
 			throw std::invalid_argument("invalid size");
 		}
 	}
 
 	void e1d::run() {
-		game.run();
+		(*game).run();
 	}
 
 	void e1d::display() {
-		int size = game.sizeGet()[0];
+		int size = (*game).sizeGet()[0];
 
 		for (int i = 0; i < size; ++i) {
-			GlBegin(GL_POLYGON);
+			glBegin(GL_POLYGON);
 			glVertex2i(
-				config.wx1 + i * (config.wx2 - config.wx1) / (size + 1), 
-				config.wy1 + (config.wy2 - config.wy1) / 2
-			)
+				conf.wx0 + i * (conf.wx1 - conf.wx0) / (size + 1), 
+				conf.wy0 + (conf.wy1 - conf.wy0) / 2
+			);
 			glVertex2i(
-				config.wx1 + (i + 1) * (config.wx2 - config.wx1) / (size + 1), 
-				config.wy1 + (config.wy2 - config.wy1) / 2
-			)
+				conf.wx0 + (i + 1) * (conf.wx1 - conf.wx0) / (size + 1), 
+				conf.wy0 + (conf.wy1 - conf.wy0) / 2
+			);
 			glVertex2i(
-				config.wx1 + (i + 1) * (config.wx2 - config.wx1) / (size + 1), 
-				config.wy1 + (config.wy2 - config.wy1) / 2 + (config.wy2 - config.wy1)
-			)
+				conf.wx0 + (i + 1) * (conf.wx1 - conf.wx0) / (size + 1), 
+				conf.wy0 + (conf.wy1 - conf.wy0) / 2 + (conf.wy1 - conf.wy0)
+			);
 			glVertex2i(
-				config.wx1 + i * (config.wx2 - config.wx1) / (size + 1), 
-				config.wy1 + (config.wy2 - config.wy1) / 2 + (config.wy2 - config.wy1)
-			)
-			GlEnd();
+				conf.wx0 + i * (conf.wx1 - conf.wx0) / (size + 1), 
+				conf.wy0 + (conf.wy1 - conf.wy0) / 2 + (conf.wy1 - conf.wy0)
+			);
+			glEnd();
 		}
 
-		for (; !reader.empty(); ) {
-			std::unique_ptr<data::objectData> obj = reader.pop();
-			int index = obj.koordinatesGet()[0];
+		for (; !(*loader).empty(); ) {
+			std::unique_ptr<data::objectData> obj = (*loader).pop();
+			int index = (*obj).koordinatesGet()[0];
 
 			glBegin(GL_POLYGON);
 			glVertex2i(
-				config.wx1 + index * (config.wx2 - config.wx1) / (size + 1), 
-				config.wy1 + (config.wy2 - config.wy1) / 2
-			)
+				conf.wx0 + index * (conf.wx1 - conf.wx0) / (size + 1), 
+				conf.wy0 + (conf.wy1 - conf.wy0) / 2
+			);
 			glVertex2i(
-				config.wx1 + (index + 1) * (config.wx2 - config.wx1) / (size + 1), 
-				config.wy1 + (config.wy2 - config.wy1) / 2
-			)
+				conf.wx0 + (index + 1) * (conf.wx1 - conf.wx0) / (size + 1), 
+				conf.wy0 + (conf.wy1 - conf.wy0) / 2
+			);
 			glVertex2i(
-				config.wx1 + (index + 1) * (config.wx2 - config.wx1) / (size + 1), 
-				config.wy1 + (config.wy2 - config.wy1) / 2 + (config.wy2 - config.wy1)
-			)
+				conf.wx0 + (index + 1) * (conf.wx1 - conf.wx0) / (size + 1), 
+				conf.wy0 + (conf.wy1 - conf.wy0) / 2 + (conf.wy1 - conf.wy0)
+			);
 			glVertex2i(
-				config.wx1 + index * (config.wx2 - config.wx1) / (size + 1), 
-				config.wy1 + (config.wy2 - config.wy1) / 2 + (config.wy2 - config.wy1)
-			)
+				conf.wx0 + index * (conf.wx1 - conf.wx0) / (size + 1), 
+				conf.wy0 + (conf.wy1 - conf.wy0) / 2 + (conf.wy1 - conf.wy0)
+			);
+			glEnd();
 		}
 
 		glFlush();

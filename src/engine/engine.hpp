@@ -4,26 +4,27 @@
 #include "mod.hpp"
 #include "io.hpp"
 #include "game.hpp"
+#include "eConfig.hpp"
 
 namespace engine {
-	class engine {
-		private:
-			const config::config& conf;
+	class engineBase {
+		protected:
+			const config& conf;
 
-			mod::mod game;
+			std::unique_ptr<mod::mod> game;
 			
 			io::reader<event::output>* reader;
 			io::writer<event::input<game::game>>* writer;
 			io::reader<data::objectData>* loader;
 
 		public:
-			engine(const config& _cconf_, mod::mod&& _game_);
-			~engine();
+			engineBase(const config& _cconf_, std::unique_ptr<mod::mod> _game_);
+			~engineBase();
 
 			virtual void run() = 0;
 
 			virtual void display() = 0;
 	};
-};
+}
 
 #endif // ENGINE_HPP

@@ -1,34 +1,26 @@
 #ifndef ENGINE_HPP
 #define ENGINE_HPP
 
-#include "config.hpp"
+#include "eConfig.hpp"
 #include "mod.hpp"
 #include "type.hpp"
+#include "e2d.hpp"
+
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glut.h>
 
 #include <string>
 
-namespace engine {
-	struct config {
-		std::string configFile;
-		std::string saveDir;
-
-		int wx0, wy0, wx1, wy1;
-		int mx0, my0, mx1, my1;
-
-		std::string title;
-
-		void load(std::string config);
-	};
-
+namespace engine {	
 	class menu {
 		private:
-			std::string configFIle = "config\\config.ec";
+			std::string configFile = "config\\config.ec";
 			config conf;
 
 			e1d* manager;
 
 		public:
-
 			menu();
 			~menu();
 
@@ -36,8 +28,10 @@ namespace engine {
 			void window();
 			void display();
 
-			void run();
-	}
+			void control(unsigned char key, int x, int y);
+
+			void run(int argc, char** argv);
+	};
 }
 
 #endif // ENGINE_HPP

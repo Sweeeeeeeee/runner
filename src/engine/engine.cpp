@@ -1,7 +1,7 @@
 #include "engine.hpp"
 
 namespace engine {
-	engine::engine(const config::config& _conf_, mod::mod&& _game_) :
+	engineBase::engineBase(const config& _conf_, std::unique_ptr<mod::mod> _game_) :
 		conf(_conf_),
 		game(std::move(_game_)) {
 
@@ -10,9 +10,7 @@ namespace engine {
 		io::reader<data::objectData>* loader;
 	}
 
-	engine::~engine() {
-		delete conf;
-		delete game;
+	engineBase::~engineBase() {
 		delete reader;
 		delete writer;
 		delete loader;

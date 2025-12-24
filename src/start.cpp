@@ -1,7 +1,7 @@
 #include "open.hpp"
 
-int main() {
+int main(int argc, char** argv) {
 	engine::menu game;
 
-	game.run();
+	game.run(argc, argv);
 }
